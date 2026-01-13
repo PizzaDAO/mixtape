@@ -6,6 +6,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { MixtapePlayer } from '@/components/MixtapePlayer';
 import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { getImagePath } from '@/lib/utils';
 
 interface MixtapeMetadata {
   title: string;
@@ -30,7 +31,7 @@ export default function PlayerPage() {
         setMetadata({
           title: 'The Rare Pizzas Mixtape',
           artist: 'PizzaDAO',
-          cover_image_url: '/mixtape-vol-1.jpg',
+          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
         });
         return;
       }
@@ -50,7 +51,7 @@ export default function PlayerPage() {
         setMetadata({
           title: 'The Rare Pizzas Mixtape',
           artist: 'PizzaDAO',
-          cover_image_url: '/mixtape-vol-1.jpg',
+          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
         });
       }
     };
@@ -102,7 +103,7 @@ export default function PlayerPage() {
       <div className="min-h-screen bg-red-600 text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <img src="/pizzadao-logo-white.png" alt="PizzaDAO" className="h-12 w-auto" />
+            <img src={getImagePath('/pizzadao-logo-white.png')} alt="PizzaDAO" className="h-12 w-auto" />
             <a href="/" className="text-2xl font-bold">Mixtape</a>
           </div>
           <ConnectButton />

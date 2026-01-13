@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { PurchaseCard } from '@/components/PurchaseCard';
+import { getImagePath } from '@/lib/utils';
 
 export default function Home() {
   const [selectedVolume, setSelectedVolume] = useState<1 | 2>(1);
 
   const volumes = {
     1: {
-      image: '/mixtape-vol-1.jpg',
+      image: getImagePath('/mixtape-vol-1.jpg'),
       title: 'Volume 1',
       tracks: [
         'Sauce',
@@ -29,7 +30,7 @@ export default function Home() {
       ]
     },
     2: {
-      image: '/mixtape-vol-2.png',
+      image: getImagePath('/mixtape-vol-2.png'),
       title: 'Volume 2',
       tracks: [
         'Opening - Back in the Kitchen',
@@ -54,7 +55,7 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white relative">
       <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
         <img
-          src="/pizzadao-logo-white.png"
+          src={getImagePath('/pizzadao-logo-white.png')}
           alt="PizzaDAO"
           className="h-12 w-auto"
         />

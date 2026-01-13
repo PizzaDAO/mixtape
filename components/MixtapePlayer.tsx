@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { useListeningTracker } from '@/hooks/useListeningTracker';
 import { formatDuration } from '@/lib/constants';
+import { getImagePath } from '@/lib/utils';
 
 interface MixtapePlayerProps {
   audioUrl: string;
@@ -102,7 +103,7 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
       {/* Cover Art */}
       <div className="aspect-square rounded-lg mb-6 overflow-hidden">
         <img
-          src={coverImageUrl || '/mixtape-vol-1.jpg'}
+          src={coverImageUrl || getImagePath('/mixtape-vol-1.jpg')}
           alt={title}
           className="w-full h-full object-cover"
         />

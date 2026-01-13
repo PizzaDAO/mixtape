@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { getImagePath } from '@/lib/utils';
 
 interface MixtapeMetadata {
   token_id: number;
@@ -27,7 +28,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
           token_id: 1,
           title: 'The Rare Pizzas Mixtape',
           artist: 'PizzaDAO',
-          cover_image_url: '/mixtape-vol-1.jpg',
+          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
           duration_seconds: 3600,
         });
         setIsLoading(false);
@@ -50,7 +51,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
           token_id: 1,
           title: 'The Rare Pizzas Mixtape',
           artist: 'PizzaDAO',
-          cover_image_url: '/mixtape-vol-1.jpg',
+          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
           duration_seconds: 3600,
         });
       } finally {
@@ -88,7 +89,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
         >
           <div className="aspect-square overflow-hidden">
             <img
-              src={metadata.cover_image_url || '/mixtape-vol-1.jpg'}
+              src={metadata.cover_image_url || getImagePath('/mixtape-vol-1.jpg')}
               alt={metadata.title}
               className="w-full h-full object-cover group-hover:scale-105 transition"
             />
