@@ -89,13 +89,13 @@ export default function Home() {
           <img
             src={getImagePath('/pizzadao-logo-white.png')}
             alt="PizzaDAO"
-            className="h-16 w-auto mx-auto mb-8"
+            className="h-12 w-auto mx-auto mb-4"
           />
 
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-yellow-400 tracking-tight">
             THE RARE PIZZAS MIXTAPE
           </h2>
-          <p className="text-2xl mb-8 text-gray-300">Own the exclusive mixtape for just <span className="text-yellow-400 font-bold">$4.20 USDC</span></p>
+          <p className="text-2xl mb-8 text-gray-300"> <span className="text-white-400 font-bold">HOT & FRESH</span></p>
 
           {/* Volume Selector */}
           <div className="flex gap-4 justify-center mb-8">
