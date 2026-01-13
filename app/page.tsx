@@ -140,7 +140,7 @@ export default function Home() {
 
             {/* Tracklist and Collect Button */}
             <div className="bg-gray-900 rounded-lg p-6 border-2 border-yellow-500">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-6">Tracklist - {currentVolume.title}</h3>
+              <h3 className="text-2xl font-bold text-yellow-400 mb-6">Tracklist</h3>
 
               {/* Two-column tracklist for larger screens */}
               <ol className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-gray-300">
