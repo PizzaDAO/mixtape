@@ -12,7 +12,7 @@ export function useMixtapeOwnership(address: string | undefined) {
     },
   });
 
-  const ownsNFT = balance !== undefined && balance > 0n;
+  const ownsNFT = balance !== undefined && balance > BigInt(0);
   const quantity = balance ? Number(balance) : 0;
 
   return {
