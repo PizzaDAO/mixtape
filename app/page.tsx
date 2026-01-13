@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { getImagePath } from '@/lib/utils';
 
 export default function Home() {
   const [selectedVolume, setSelectedVolume] = useState<1 | 2>(1);
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
 
   const volumes = {
     1: {
@@ -95,7 +96,7 @@ export default function Home() {
           />
 
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-yellow-400 tracking-tight">
-            THE RARE PIZZAS MIXTAPE
+            RARE PIZZA MIXTAPE
           </h2>
           <p className="text-2xl mb-8 text-gray-300"> <span className="text-white-400 font-bold">HOT & FRESH</span></p>
 
@@ -151,17 +152,19 @@ export default function Home() {
                 ))}
               </ol>
 
-              {/* Collect Button */}
+              {/* Collect/Buy Button */}
               <div className="pt-4 border-t border-gray-700">
                 {isConnected ? (
                   <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-yellow-400">
                     Collect
                   </button>
                 ) : (
-                  <div className="w-full">
-                    <p className="text-gray-400 text-sm mb-3 text-center">Connect wallet to collect</p>
-                    <ConnectButton />
-                  </div>
+                  <button
+                    onClick={openConnectModal}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-yellow-400"
+                  >
+                    Buy
+                  </button>
                 )}
               </div>
             </div>
