@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s \"C:\\\\Users\\\\samgo\\\\OneDrive\\\\Documents\\\\PizzaDAO\\\\Code\\\\mixtape\")",
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 5\")",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(cmd /c \"taskkill /F /PID 1160320\")",
+      "Bash(copy \"C:\\\\Users\\\\samgo\\\\Downloads\\\\mixtape volume 1.jpg\" \"public\\\\mixtape-vol-1.jpg\")",
+      "WebFetch(domain:open.spotify.com)",
+      "Bash(git init:*)",
+      "Bash(gh:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

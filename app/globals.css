@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* Custom range slider styles */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+input[type="range"].slider::-webkit-slider-track {
+  background: rgb(55, 65, 81);
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -4px;
+  background-color: rgb(249, 115, 22);
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  transition: background-color 0.15s;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  background-color: rgb(234, 88, 12);
+}
+
+/* Firefox */
+input[type="range"].slider::-moz-range-track {
+  background: rgb(55, 65, 81);
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  background-color: rgb(249, 115, 22);
+  border: none;
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  transition: background-color 0.15s;
+}
+
+input[type="range"].slider::-moz-range-thumb:hover {
+  background-color: rgb(234, 88, 12);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(17, 24, 39);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(75, 85, 99);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(107, 114, 128);
+}
