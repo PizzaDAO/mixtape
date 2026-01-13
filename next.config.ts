@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // If deploying to https://pizzadao.github.io/mixtape/, uncomment and set basePath
-  // basePath: '/mixtape',
+  // Deploying to https://pizzadao.github.io/mixtape/
+  basePath: '/mixtape',
 };
 
 export default nextConfig;
