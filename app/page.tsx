@@ -62,7 +62,7 @@ export default function Home() {
           className="hover:scale-110 transition-transform"
         >
           <img
-            src="https://cdn.simpleicons.org/googlesheets/34A853"
+            src="https://cdn.simpleicons.org/googlesheets/ffffff"
             alt="Google Sheets"
             className="w-8 h-8"
           />
