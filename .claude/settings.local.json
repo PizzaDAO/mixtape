@@ -19,7 +19,8 @@
       "Bash(gh:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(code \"C:\\\\Users\\\\samgo\\\\OneDrive\\\\Documents\\\\PizzaDAO\\\\Code\\\\mixtape\")"
     ]
   }
 }
