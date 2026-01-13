@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { PurchaseCard } from '@/components/PurchaseCard';
 import { getImagePath } from '@/lib/utils';
 
@@ -53,15 +52,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white relative">
-      <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <img
-          src={getImagePath('/pizzadao-logo-white.png')}
-          alt="PizzaDAO"
-          className="h-12 w-auto"
-        />
-        <ConnectButton />
-      </nav>
-
       {/* GitHub + Google Sheets links — bottom right */}
       <div className="fixed bottom-4 right-4 flex items-center gap-3 z-50">
         {/* Google Sheets (left) */}
@@ -95,6 +85,13 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
+          {/* PizzaDAO Logo centered above title */}
+          <img
+            src={getImagePath('/pizzadao-logo-white.png')}
+            alt="PizzaDAO"
+            className="h-16 w-auto mx-auto mb-8"
+          />
+
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-yellow-400 tracking-tight">
             THE RARE PIZZAS MIXTAPE
           </h2>
