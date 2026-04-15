@@ -4,11 +4,15 @@ import { useState } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { getImagePath } from '@/lib/utils';
+import { PurchaseModal } from '@/components/PurchaseModal';
+import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
 
 export default function Home() {
   const [selectedVolume, setSelectedVolume] = useState<1 | 2>(1);
-  const { isConnected } = useAccount();
+  const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
+  const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
+  const { ownsNFT } = useMixtapeOwnership(address);
 
   const volumes = {
     1: {
@@ -155,9 +159,29 @@ export default function Home() {
               {/* Collect/Buy Button */}
               <div className="pt-4 border-t border-gray-700">
                 {isConnected ? (
-                  <button className="w-full bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow">
-                    Collect
-                  </button>
+                  ownsNFT ? (
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setIsPurchaseOpen(true)}
+                        className="flex-1 bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow"
+                      >
+                        Collected — Buy Another
+                      </button>
+                      <a
+                        href="/player"
+                        className="flex-1 bg-pizza-red hover:brightness-110 text-white font-black py-4 px-6 text-xl text-center transition transform hover:scale-105 border-2 border-pizza-red"
+                      >
+                        Play Now
+                      </a>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsPurchaseOpen(true)}
+                      className="w-full bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow"
+                    >
+                      Collect — $4.20 USDC
+                    </button>
+                  )
                 ) : (
                   <button
                     onClick={openConnectModal}
@@ -186,6 +210,11 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <PurchaseModal
+        isOpen={isPurchaseOpen}
+        onClose={() => setIsPurchaseOpen(false)}
+      />
     </div>
   );
 }

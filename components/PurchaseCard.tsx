@@ -1,16 +1,24 @@
 'use client';
 
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useMixtapePurchase } from '@/hooks/useMixtapePurchase';
 import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
-import { MIXTAPE_PRICE, getBaseScanLink } from '@/lib/constants';
+import { useUsdcBalance } from '@/hooks/useUsdcBalance';
+import { MIXTAPE_PRICE, BASE_CHAIN_ID, getBaseScanLink } from '@/lib/constants';
 
-export function PurchaseCard() {
-  const { address, isConnected } = useAccount();
-  const { ownsNFT, quantity, isLoading: isCheckingOwnership } = useMixtapeOwnership(address);
+interface PurchaseCardProps {
+  onSuccess?: () => void;
+}
+
+export function PurchaseCard({ onSuccess }: PurchaseCardProps) {
+  const { address, isConnected, chainId } = useAccount();
+  const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { ownsNFT, quantity, isLoading: isCheckingOwnership, refetch: refetchOwnership } = useMixtapeOwnership(address);
+  const { balance: usdcBalance, hasEnough, isLoading: isLoadingBalance, refetch: refetchBalance } = useUsdcBalance();
   const {
     purchase,
+    retryMint,
     status,
     usdcTxHash,
     mintTxHash,
@@ -18,6 +26,11 @@ export function PurchaseCard() {
     reset,
     isProcessing,
   } = useMixtapePurchase();
+
+  const isOnBase = chainId === BASE_CHAIN_ID;
+
+  // Determine if the error is a mint-only failure (USDC transferred but mint failed)
+  const isMintFailure = status === 'error' && !!usdcTxHash;
 
   if (!isConnected) {
     return (
@@ -69,18 +82,53 @@ export function PurchaseCard() {
       <h3 className="text-4xl font-bold mb-2 text-white">Buy Mixtape NFT</h3>
       <p className="text-5xl font-bold text-pizza-yellow mb-6">${MIXTAPE_PRICE} USDC</p>
 
-      {status === 'idle' && (
+      {/* Chain check: must be on Base */}
+      {!isOnBase && status === 'idle' && (
         <>
-          <p className="text-gray-300 mb-6 text-lg">
+          <p className="text-gray-300 mb-4 text-lg">
+            You need to be on the Base network to purchase.
+          </p>
+          <button
+            onClick={() => switchChain({ chainId: BASE_CHAIN_ID })}
+            disabled={isSwitching}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-black py-4 px-6 text-2xl transition transform hover:scale-105 border-2 border-blue-400"
+          >
+            {isSwitching ? 'Switching...' : 'Switch to Base'}
+          </button>
+        </>
+      )}
+
+      {/* Main purchase flow — only show when on Base */}
+      {isOnBase && status === 'idle' && (
+        <>
+          <p className="text-gray-300 mb-4 text-lg">
             Purchase The Rare Pizzas Mixtape NFT on Base chain. Stream, download,
             and compete on the leaderboard.
           </p>
+
+          {/* USDC Balance Display */}
+          {!isLoadingBalance && (
+            <div className="mb-4 p-3 bg-gray-800 border border-gray-700 rounded">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Your USDC Balance</span>
+                <span className={`font-bold ${hasEnough ? 'text-green-400' : 'text-red-400'}`}>
+                  {usdcBalance.toFixed(2)} USDC
+                </span>
+              </div>
+              {!hasEnough && (
+                <p className="text-red-400 text-xs mt-1">
+                  Insufficient balance. You need at least ${MIXTAPE_PRICE} USDC.
+                </p>
+              )}
+            </div>
+          )}
+
           <button
             onClick={purchase}
-            disabled={isProcessing}
-            className="w-full bg-pizza-yellow hover:brightness-110 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-black py-4 px-6 text-2xl transition transform hover:scale-105 border-2 border-pizza-yellow"
+            disabled={isProcessing || !hasEnough}
+            className="w-full bg-pizza-yellow hover:brightness-110 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-black py-4 px-6 text-2xl transition transform hover:scale-105 border-2 border-pizza-yellow disabled:border-gray-600"
           >
-            Buy Now
+            {!hasEnough ? 'Insufficient USDC' : 'Buy Now'}
           </button>
         </>
       )}
@@ -120,7 +168,7 @@ export function PurchaseCard() {
 
       {status === 'success' && (
         <div className="text-center">
-          <div className="text-pizza-yellow text-5xl mb-4">✓</div>
+          <div className="text-pizza-yellow text-5xl mb-4">&#10003;</div>
           <h4 className="text-3xl font-bold mb-4 text-pizza-yellow">Purchase Successful!</h4>
           <p className="text-gray-300 mb-4 text-lg">Your mixtape NFT has been minted</p>
           {mintTxHash && (
@@ -141,7 +189,11 @@ export function PurchaseCard() {
               Play Now
             </a>
             <button
-              onClick={reset}
+              onClick={() => {
+                refetchOwnership();
+                refetchBalance();
+                reset();
+              }}
               className="flex-1 bg-pizza-red hover:brightness-110 text-white font-bold py-3 px-6 transition transform hover:scale-105 border-2 border-pizza-red"
             >
               Buy Another
@@ -152,15 +204,29 @@ export function PurchaseCard() {
 
       {status === 'error' && (
         <div className="text-center">
-          <div className="text-pizza-red text-5xl mb-4">✕</div>
+          <div className="text-pizza-red text-5xl mb-4">&#10005;</div>
           <h4 className="text-3xl font-bold mb-4 text-pizza-red">Error</h4>
           <p className="text-gray-300 mb-4 text-lg">{errorMessage || 'An error occurred'}</p>
-          <button
-            onClick={reset}
-            className="w-full bg-pizza-yellow hover:brightness-110 text-black font-bold py-3 px-6 transition transform hover:scale-105 border-2 border-pizza-yellow"
-          >
-            Try Again
-          </button>
+          {isMintFailure && usdcTxHash ? (
+            <div className="space-y-3">
+              <p className="text-pizza-yellow text-sm">
+                Your USDC payment was successful. You can retry minting without paying again.
+              </p>
+              <button
+                onClick={() => retryMint(usdcTxHash)}
+                className="w-full bg-pizza-yellow hover:brightness-110 text-black font-bold py-3 px-6 transition transform hover:scale-105 border-2 border-pizza-yellow"
+              >
+                Retry Mint
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={reset}
+              className="w-full bg-pizza-yellow hover:brightness-110 text-black font-bold py-3 px-6 transition transform hover:scale-105 border-2 border-pizza-yellow"
+            >
+              Try Again
+            </button>
+          )}
         </div>
       )}
     </div>
