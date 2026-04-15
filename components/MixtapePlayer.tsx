@@ -67,18 +67,9 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
     };
   }, [isPlaying]);
 
-  // Track play time continuously (for display, not backend)
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        playTimeRef.current += 1;
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isPlaying]);
+  // NOTE: The 1-second display interval has been removed to fix the
+  // double-counting bug. Session display time now uses currentTime from
+  // useAudioPlayer which is driven by the native 'timeupdate' event.
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
@@ -195,7 +186,7 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
       {/* Session Info */}
       {sessionId && (
         <div className="text-center text-sm text-gray-400">
-          <p>Session time: {formatDuration(playTimeRef.current)}</p>
+          <p>Session time: {formatDuration(Math.floor(currentTime))}</p>
           {totalSessionTime > 0 && (
             <p className="text-xs">Last saved: {formatDuration(totalSessionTime)}</p>
           )}

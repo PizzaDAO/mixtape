@@ -8,6 +8,14 @@ const NFT_CONTRACT_ADDRESS = Deno.env.get('NFT_CONTRACT_ADDRESS') || '';
 const BASE_RPC_URL = Deno.env.get('BASE_RPC_URL') || 'https://mainnet.base.org';
 const MIXTAPE_TOKEN_ID = 1;
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 // NFT ABI
 const MIXTAPE_NFT_ABI = [
   {
@@ -22,26 +30,56 @@ const MIXTAPE_NFT_ABI = [
   },
 ] as const;
 
+/**
+ * Extract the storage path from an audio_file_url.
+ *
+ * Accepted formats:
+ *   - Full Supabase URL: https://project.supabase.co/storage/v1/object/public/bucket/path/to/file.mp3
+ *   - Relative path within the bucket: path/to/file.mp3  (or just file.mp3)
+ *
+ * For full URLs we strip everything up to and including the bucket name
+ * so that subdirectory structure is preserved.
+ */
+function extractAudioPath(rawUrl: string): string {
+  if (rawUrl.includes('storage/v1/object')) {
+    // Full URL — find the bucket segment and return everything after it
+    // Pattern: .../storage/v1/object/public/<bucket>/<path...>
+    //       or .../storage/v1/object/sign/<bucket>/<path...>
+    const regex = /storage\/v1\/object\/(?:public|sign)\/[^/]+\/(.+)/;
+    const match = rawUrl.match(regex);
+    if (match) {
+      return match[1];
+    }
+    // Fallback: return the last segment (old behaviour) if regex didn't match
+    return rawUrl.split('/').slice(-1)[0];
+  }
+  // Already a relative path
+  return rawUrl;
+}
+
 serve(async (req) => {
-  // CORS headers
+  // CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-      },
-    });
+    return new Response('ok', { headers: CORS_HEADERS });
   }
 
   try {
+    // Validate NFT contract address is configured and not zero
+    if (!NFT_CONTRACT_ADDRESS || NFT_CONTRACT_ADDRESS === ZERO_ADDRESS) {
+      console.error('NFT_CONTRACT_ADDRESS is not set or is the zero address');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error: NFT contract address not set' }),
+        { status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
+      );
+    }
+
     // Parse request body
     const { userAddress } = await req.json();
 
     if (!userAddress) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameter: userAddress' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
       );
     }
 
@@ -72,10 +110,7 @@ serve(async (req) => {
         }),
         {
           status: 403,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
+          headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
         }
       );
     }
@@ -97,16 +132,12 @@ serve(async (req) => {
       console.error('Error fetching mixtape metadata:', metadataError);
       return new Response(
         JSON.stringify({ error: 'Mixtape metadata not found' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
       );
     }
 
-    // Extract bucket and path from audio_file_url
-    // Expected format: https://project.supabase.co/storage/v1/object/public/bucket/path
-    // or for private: just the path relative to the bucket
-    const audioPath = metadata.audio_file_url.includes('storage/v1/object')
-      ? metadata.audio_file_url.split('/').slice(-1)[0] // Get last segment
-      : metadata.audio_file_url;
+    // Extract the storage path, preserving subdirectory structure
+    const audioPath = extractAudioPath(metadata.audio_file_url);
 
     // Generate signed URL for audio file (1 hour expiry)
     const { data: signedUrlData, error: signedUrlError } = await supabaseClient.storage
@@ -117,7 +148,7 @@ serve(async (req) => {
       console.error('Error creating signed URL:', signedUrlError);
       return new Response(
         JSON.stringify({ error: 'Failed to generate audio URL' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
       );
     }
 
@@ -142,10 +173,7 @@ serve(async (req) => {
       }),
       {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
       }
     );
   } catch (error) {
@@ -157,10 +185,7 @@ serve(async (req) => {
       }),
       {
         status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
       }
     );
   }

@@ -16,7 +16,7 @@ interface MixtapeMetadata {
 
 export default function PlayerPage() {
   const { address, isConnected } = useAccount();
-  const { ownsNFT, isLoading: isCheckingOwnership } = useMixtapeOwnership(address);
+  const { ownsNFT, isLoading: isCheckingOwnership, isContractMisconfigured } = useMixtapeOwnership(address);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<MixtapeMetadata | null>(null);
@@ -63,33 +63,51 @@ export default function PlayerPage() {
   useEffect(() => {
     if (!address || !ownsNFT) return;
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setError(
+        'Audio service is not configured. Please contact the site administrator.'
+      );
+      return;
+    }
+
     const fetchAudioUrl = async () => {
       setIsLoadingAudio(true);
       setError(null);
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/verify-ownership`,
+          `${supabaseUrl}/functions/v1/verify-ownership`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+              'Authorization': `Bearer ${supabaseAnonKey}`,
             },
             body: JSON.stringify({ userAddress: address }),
           }
         );
+
+        // Validate content-type before parsing as JSON
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          console.error('Unexpected content-type from verify-ownership:', contentType);
+          setError('Audio service returned an unexpected response. Please try again later.');
+          return;
+        }
 
         const data = await response.json();
 
         if (response.ok && data.authorized) {
           setAudioUrl(data.audioUrl);
         } else {
-          setError(data.message || 'Failed to load audio');
+          setError(data.message || data.error || 'Failed to load audio');
         }
       } catch (err) {
         console.error('Failed to fetch audio URL:', err);
-        setError('Failed to load audio');
+        setError('Could not connect to the audio service. Please check your connection and try again.');
       } finally {
         setIsLoadingAudio(false);
       }
@@ -115,6 +133,26 @@ export default function PlayerPage() {
             Connect your wallet to listen to the mixtape
           </p>
           <ConnectButton />
+        </main>
+      </div>
+    );
+  }
+
+  if (isContractMisconfigured) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
+          <ConnectButton />
+        </nav>
+
+        <main className="container mx-auto px-4 py-16 text-center">
+          <div className="bg-yellow-900/30 border border-yellow-500 rounded-lg p-8 max-w-2xl mx-auto">
+            <p className="text-yellow-400 text-xl mb-4">Configuration Error</p>
+            <p className="text-gray-300">
+              The NFT contract is not configured correctly. Please contact the site administrator.
+            </p>
+          </div>
         </main>
       </div>
     );
