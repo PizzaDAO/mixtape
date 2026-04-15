@@ -10,7 +10,7 @@ function UserDisplay({ user }: { user: User }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center text-sm">
+      <div className="w-8 h-8 bg-gradient-to-br from-pizza-yellow to-pizza-red rounded-full flex items-center justify-center text-sm text-black">
         {user.ens_name ? user.ens_name[0].toUpperCase() : '?'}
       </div>
       <div>
@@ -46,9 +46,9 @@ export function LeaderboardTable() {
 
   if (!isSupabaseConfigured) {
     return (
-      <div className="bg-yellow-900/30 border border-yellow-500 rounded-lg p-8 text-center">
+      <div className="bg-pizza-yellow/10 border border-pizza-yellow rounded-lg p-8 text-center">
         <div className="text-5xl mb-4">⚙️</div>
-        <h3 className="text-xl font-bold mb-2 text-yellow-400">Supabase Not Configured</h3>
+        <h3 className="text-xl font-bold mb-2 text-pizza-yellow">Supabase Not Configured</h3>
         <p className="text-gray-300 text-sm">
           Set up your Supabase project and add environment variables to enable the leaderboard.
         </p>
@@ -58,8 +58,8 @@ export function LeaderboardTable() {
 
   if (error) {
     return (
-      <div className="bg-red-900/30 border border-red-500 rounded-lg p-8 text-center">
-        <p className="text-red-400">Failed to load leaderboard</p>
+      <div className="bg-red-900/30 border border-pizza-red rounded-lg p-8 text-center">
+        <p className="text-pizza-red">Failed to load leaderboard</p>
         <button
           onClick={() => refetch()}
           className="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
@@ -73,7 +73,7 @@ export function LeaderboardTable() {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
         <p className="text-gray-400">Loading leaderboard...</p>
       </div>
     );
@@ -120,11 +120,11 @@ export function LeaderboardTable() {
                 key={user.id}
                 className={`hover:bg-black/30 transition ${
                   index === 0
-                    ? 'bg-gradient-to-r from-yellow-900/20 to-transparent'
+                    ? 'bg-gradient-to-r from-pizza-yellow/20 to-transparent'
                     : index === 1
                     ? 'bg-gradient-to-r from-gray-700/20 to-transparent'
                     : index === 2
-                    ? 'bg-gradient-to-r from-orange-900/20 to-transparent'
+                    ? 'bg-gradient-to-r from-pizza-red/20 to-transparent'
                     : ''
                 }`}
               >
@@ -140,7 +140,7 @@ export function LeaderboardTable() {
                   <UserDisplay user={user} />
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <span className="text-orange-400 font-bold text-lg">
+                  <span className="text-pizza-yellow font-bold text-lg">
                     {formatDuration(user.total_listening_time)}
                   </span>
                 </td>

@@ -11,14 +11,14 @@ export default function CollectionPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+      <div className="min-h-screen bg-black text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
+          <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
           <ConnectButton />
         </nav>
 
         <main className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-4xl font-bold mb-6">My Collection</h1>
+          <h1 className="text-4xl font-bold mb-6 text-pizza-yellow">My Collection</h1>
           <p className="text-xl text-gray-400 mb-8">
             Connect your wallet to view your mixtape collection
           </p>
@@ -29,14 +29,14 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+    <div className="min-h-screen bg-black text-white">
       <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
+        <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
         <div className="flex gap-4 items-center">
-          <a href="/player" className="text-gray-300 hover:text-white transition">
+          <a href="/player" className="text-gray-300 hover:text-pizza-yellow transition">
             Player
           </a>
-          <a href="/leaderboard" className="text-gray-300 hover:text-white transition">
+          <a href="/leaderboard" className="text-gray-300 hover:text-pizza-yellow transition">
             Leaderboard
           </a>
           <a href="/artists" className="text-gray-300 hover:text-white transition">
@@ -48,7 +48,7 @@ export default function CollectionPage() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Collection</h1>
+          <h1 className="text-4xl font-bold mb-2 text-pizza-yellow">My Collection</h1>
           <p className="text-gray-400">
             {address && `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`}
           </p>
@@ -56,7 +56,7 @@ export default function CollectionPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
             <p className="text-xl text-gray-400">Loading collection...</p>
           </div>
         ) : !ownsNFT ? (
@@ -68,7 +68,7 @@ export default function CollectionPage() {
             </p>
             <a
               href="/"
-              className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition"
+              className="inline-block bg-pizza-yellow hover:brightness-110 text-black font-bold py-3 px-8 rounded-lg transition"
             >
               Buy Mixtape
             </a>
@@ -78,7 +78,7 @@ export default function CollectionPage() {
             <div className="mb-6">
               <div className="flex items-center gap-4">
                 <h2 className="text-2xl font-bold">Owned Mixtapes</h2>
-                <span className="bg-orange-600 text-white px-4 py-1 rounded-full font-bold">
+                <span className="bg-pizza-red text-white px-4 py-1 rounded-full font-bold">
                   {quantity} {quantity === 1 ? 'copy' : 'copies'}
                 </span>
               </div>

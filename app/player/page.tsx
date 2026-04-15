@@ -16,7 +16,7 @@ interface MixtapeMetadata {
 
 export default function PlayerPage() {
   const { address, isConnected } = useAccount();
-  const { ownsNFT, isLoading: isCheckingOwnership } = useMixtapeOwnership(address);
+  const { ownsNFT, isLoading: isCheckingOwnership, isContractMisconfigured } = useMixtapeOwnership(address);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<MixtapeMetadata | null>(null);
@@ -63,33 +63,51 @@ export default function PlayerPage() {
   useEffect(() => {
     if (!address || !ownsNFT) return;
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setError(
+        'Audio service is not configured. Please contact the site administrator.'
+      );
+      return;
+    }
+
     const fetchAudioUrl = async () => {
       setIsLoadingAudio(true);
       setError(null);
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/verify-ownership`,
+          `${supabaseUrl}/functions/v1/verify-ownership`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+              'Authorization': `Bearer ${supabaseAnonKey}`,
             },
             body: JSON.stringify({ userAddress: address }),
           }
         );
+
+        // Validate content-type before parsing as JSON
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          console.error('Unexpected content-type from verify-ownership:', contentType);
+          setError('Audio service returned an unexpected response. Please try again later.');
+          return;
+        }
 
         const data = await response.json();
 
         if (response.ok && data.authorized) {
           setAudioUrl(data.audioUrl);
         } else {
-          setError(data.message || 'Failed to load audio');
+          setError(data.message || data.error || 'Failed to load audio');
         }
       } catch (err) {
         console.error('Failed to fetch audio URL:', err);
-        setError('Failed to load audio');
+        setError('Could not connect to the audio service. Please check your connection and try again.');
       } finally {
         setIsLoadingAudio(false);
       }
@@ -100,10 +118,10 @@ export default function PlayerPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-red-600 text-white">
+      <div className="min-h-screen bg-pizza-red text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <img src={getImagePath('/pizzadao-logo-white.png')} alt="PizzaDAO" className="h-12 w-auto" />
+            <img src={getImagePath('/pizzadao-records.svg')} alt="PizzaDAO Records" className="h-12 w-auto" />
             <a href="/" className="text-2xl font-bold">Mixtape</a>
           </div>
           <ConnectButton />
@@ -120,7 +138,7 @@ export default function PlayerPage() {
     );
   }
 
-  if (isCheckingOwnership) {
+  if (isContractMisconfigured) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
@@ -129,7 +147,27 @@ export default function PlayerPage() {
         </nav>
 
         <main className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="bg-yellow-900/30 border border-yellow-500 rounded-lg p-8 max-w-2xl mx-auto">
+            <p className="text-yellow-400 text-xl mb-4">Configuration Error</p>
+            <p className="text-gray-300">
+              The NFT contract is not configured correctly. Please contact the site administrator.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (isCheckingOwnership) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
+          <ConnectButton />
+        </nav>
+
+        <main className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
           <p className="text-xl text-gray-400">Checking ownership...</p>
         </main>
       </div>
@@ -138,9 +176,9 @@ export default function PlayerPage() {
 
   if (!ownsNFT) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+      <div className="min-h-screen bg-black text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
+          <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
           <ConnectButton />
         </nav>
 
@@ -152,7 +190,7 @@ export default function PlayerPage() {
           </p>
           <a
             href="/"
-            className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition"
+            className="inline-block bg-pizza-red hover:brightness-110 text-white font-bold py-3 px-8 rounded-lg transition"
           >
             Purchase Mixtape
           </a>
@@ -162,14 +200,14 @@ export default function PlayerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+    <div className="min-h-screen bg-black text-white">
       <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
+        <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
         <div className="flex gap-4 items-center">
-          <a href="/collection" className="text-gray-300 hover:text-white transition">
+          <a href="/collection" className="text-gray-300 hover:text-pizza-yellow transition">
             Collection
           </a>
-          <a href="/leaderboard" className="text-gray-300 hover:text-white transition">
+          <a href="/leaderboard" className="text-gray-300 hover:text-pizza-yellow transition">
             Leaderboard
           </a>
           <a href="/artists" className="text-gray-300 hover:text-white transition">
@@ -180,16 +218,16 @@ export default function PlayerPage() {
       </nav>
 
       <main className="container mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-8 text-center">Now Playing</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center text-pizza-yellow">Now Playing</h1>
 
         {isLoadingAudio ? (
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
             <p className="text-xl text-gray-400">Loading audio...</p>
           </div>
         ) : error ? (
-          <div className="bg-red-900/30 border border-red-500 rounded-lg p-8 max-w-2xl mx-auto text-center">
-            <p className="text-red-400 mb-4">{error}</p>
+          <div className="bg-red-900/30 border border-pizza-red rounded-lg p-8 max-w-2xl mx-auto text-center">
+            <p className="text-pizza-red mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
