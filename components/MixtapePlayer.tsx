@@ -83,8 +83,8 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
 
   if (error) {
     return (
-      <div className="bg-red-900/30 border border-red-500 rounded-lg p-8 text-center">
-        <p className="text-red-400">Error: {error}</p>
+      <div className="bg-red-900/30 border border-pizza-red rounded-lg p-8 text-center">
+        <p className="text-pizza-red">Error: {error}</p>
       </div>
     );
   }
@@ -138,7 +138,7 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
 
         <button
           onClick={togglePlay}
-          className="bg-orange-600 hover:bg-orange-700 rounded-full p-4 transition disabled:bg-gray-600"
+          className="bg-pizza-red hover:brightness-110 rounded-full p-4 transition disabled:bg-gray-600"
           disabled={isLoading}
         >
           {isLoading ? (
