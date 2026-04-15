@@ -95,6 +95,48 @@ export function useMixtapePurchase() {
     }
   }, [transferError]);
 
+  // Retry mint when USDC transfer succeeded but mint failed
+  const retryMint = async (existingTxHash: string) => {
+    if (!address) {
+      setErrorMessage('Please connect your wallet');
+      setStatus('error');
+      return;
+    }
+
+    setStatus('minting');
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/mint-mixtape`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            userAddress: address,
+            usdcTxHash: existingTxHash,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMintTxHash(data.mintTxHash);
+        setStatus('success');
+      } else {
+        throw new Error(data.error || 'Failed to mint NFT');
+      }
+    } catch (error: any) {
+      console.error('Retry mint error:', error);
+      setErrorMessage(error.message || 'Failed to mint NFT');
+      setStatus('error');
+    }
+  };
+
   const reset = () => {
     setStatus('idle');
     setMintTxHash(null);
@@ -103,6 +145,7 @@ export function useMixtapePurchase() {
 
   return {
     purchase,
+    retryMint,
     status,
     usdcTxHash: hash,
     mintTxHash,
