@@ -15,6 +15,9 @@ export default function LeaderboardPage() {
           <a href="/collection" className="text-gray-300 hover:text-pizza-yellow transition">
             Collection
           </a>
+          <a href="/artists" className="text-gray-300 hover:text-white transition">
+            Artists
+          </a>
           <ConnectButton />
         </div>
       </nav>

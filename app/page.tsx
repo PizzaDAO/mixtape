@@ -4,58 +4,19 @@ import { useState } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { getImagePath } from '@/lib/utils';
+import { VOLUMES, getTrackTitles, type VolumeNumber } from '@/lib/tracks';
 import { PurchaseModal } from '@/components/PurchaseModal';
 import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
 
 export default function Home() {
-  const [selectedVolume, setSelectedVolume] = useState<1 | 2>(1);
+  const [selectedVolume, setSelectedVolume] = useState<VolumeNumber>(1);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { ownsNFT } = useMixtapeOwnership(address);
 
-  const volumes = {
-    1: {
-      image: getImagePath('/mixtape-vol-1.jpg'),
-      title: 'Volume 1',
-      tracks: [
-        'Sauce',
-        'Rare Pizzas',
-        'Pizza Mind',
-        'DAO It',
-        'I Ate Myself and Want To Pie',
-        'Pizza Shortie',
-        'Pizza Pop',
-        'Wow! That\'s Rare Pizzas',
-        'Pizza Tron',
-        'PizzaDAO (We in the Metaverse)',
-        'Ain\'t No Za (if The Homies Can\'t Have a Slice)',
-        'Slice of Heaven',
-        'Molto Bene',
-        'Rare Pizzas Mixtape Outro'
-      ]
-    },
-    2: {
-      image: getImagePath('/mixtape-vol-2.png'),
-      title: 'Volume 2',
-      tracks: [
-        'Opening - Back in the Kitchen',
-        'New York Style',
-        'Chicago Deep',
-        'Detroit Square',
-        'California Dreams',
-        'Neapolitan Nights',
-        'Sicilian Soul',
-        'White Pizza (Interlude)',
-        'Extra Cheese',
-        'Hot Out The Oven',
-        'The Crust',
-        'Closing - Until Next Time'
-      ]
-    }
-  };
-
-  const currentVolume = volumes[selectedVolume];
+  const currentVolume = VOLUMES[selectedVolume];
+  const trackTitles = getTrackTitles(selectedVolume);
 
   return (
     <div className="min-h-screen bg-black text-white relative">
@@ -148,7 +109,7 @@ export default function Home() {
 
               {/* Two-column tracklist for larger screens */}
               <ol className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-gray-300">
-                {currentVolume.tracks.map((track, index) => (
+                {trackTitles.map((track, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <span className="text-pizza-yellow font-mono text-sm mt-0.5 flex-shrink-0">{String(index + 1).padStart(2, '0')}</span>
                     <span className="text-sm">{track}</span>
@@ -198,14 +159,17 @@ export default function Home() {
         <div className="text-center">
           <h3 className="text-3xl font-bold mb-8 text-pizza-yellow">Explore</h3>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="/collection" className="bg-pizza-yellow hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-black border-2 border-pizza-yellow">
+            <a href={getImagePath('/collection')} className="bg-pizza-yellow hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-black border-2 border-pizza-yellow">
               View Collection
             </a>
-            <a href="/leaderboard" className="bg-pizza-red hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-white border-2 border-pizza-red">
+            <a href={getImagePath('/leaderboard')} className="bg-pizza-red hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-white border-2 border-pizza-red">
               Leaderboard
             </a>
-            <a href="/player" className="bg-gray-900 hover:bg-gray-800 px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2 border-pizza-yellow">
+            <a href={getImagePath('/player')} className="bg-gray-900 hover:bg-gray-800 px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2 border-pizza-yellow">
               Player
+            </a>
+            <a href={getImagePath('/artists')} className="px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2" style={{ backgroundColor: '#7DD3E8', borderColor: '#7DD3E8', color: 'black' }}>
+              Artists
             </a>
           </div>
         </div>

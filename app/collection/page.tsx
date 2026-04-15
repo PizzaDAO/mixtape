@@ -39,6 +39,9 @@ export default function CollectionPage() {
           <a href="/leaderboard" className="text-gray-300 hover:text-pizza-yellow transition">
             Leaderboard
           </a>
+          <a href="/artists" className="text-gray-300 hover:text-white transition">
+            Artists
+          </a>
           <ConnectButton />
         </div>
       </nav>
