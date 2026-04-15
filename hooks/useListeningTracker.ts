@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAccount } from 'wagmi';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 export function useListeningTracker() {
   const { address } = useAccount();
@@ -10,22 +10,17 @@ export function useListeningTracker() {
   const accumulatedTimeRef = useRef<number>(0);
 
   const startSession = async () => {
-    if (!address) return;
+    if (!address || !isSupabaseConfigured) return;
 
     try {
-      const { data, error } = await supabase
-        .from('listening_sessions')
-        .insert({
-          wallet_address: address.toLowerCase(),
-          started_at: new Date().toISOString(),
-          duration_seconds: 0,
-        })
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc('create_listening_session', {
+        user_wallet: address.toLowerCase(),
+      });
 
       if (error) throw error;
 
-      setSessionId(data.id);
+      // data is the returned UUID
+      setSessionId(data);
       lastUpdateRef.current = Date.now();
       accumulatedTimeRef.current = 0;
       setTotalSessionTime(0);
@@ -35,23 +30,15 @@ export function useListeningTracker() {
   };
 
   const trackTime = async (seconds: number) => {
-    if (!sessionId || !address) return;
+    if (!sessionId || !address || !isSupabaseConfigured) return;
 
     try {
-      // Update session duration
-      await supabase
-        .from('listening_sessions')
-        .update({
-          duration_seconds: seconds,
-          ended_at: new Date().toISOString(),
-        })
-        .eq('id', sessionId);
-
-      // Increment user's total listening time
-      await supabase.rpc('increment_listening_time', {
-        user_address: address.toLowerCase(),
-        seconds: seconds - totalSessionTime, // Only increment the difference
+      const { error } = await supabase.rpc('update_listening_session', {
+        p_session_id: sessionId,
+        p_duration: seconds,
       });
+
+      if (error) throw error;
 
       setTotalSessionTime(seconds);
     } catch (error) {
@@ -60,15 +47,14 @@ export function useListeningTracker() {
   };
 
   const endSession = async () => {
-    if (!sessionId || !address) return;
+    if (!sessionId || !address || !isSupabaseConfigured) return;
 
     try {
-      await supabase
-        .from('listening_sessions')
-        .update({
-          ended_at: new Date().toISOString(),
-        })
-        .eq('id', sessionId);
+      // Final update to mark the session as ended
+      await supabase.rpc('update_listening_session', {
+        p_session_id: sessionId,
+        p_duration: totalSessionTime,
+      });
 
       setSessionId(null);
       setTotalSessionTime(0);

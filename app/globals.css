@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-pizza-yellow: #FFE135;
+  --color-pizza-red: #E85D5D;
+  --color-earth-blue: #7DD3E8;
+}
+
+:root {
+  --pizza-yellow: #FFE135;
+  --pizza-red: #E85D5D;
+  --earth-blue: #7DD3E8;
+}
+
 /* Custom range slider styles */
 input[type="range"].slider {
   -webkit-appearance: none;
@@ -19,7 +31,7 @@ input[type="range"].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   margin-top: -4px;
-  background-color: rgb(249, 115, 22);
+  background-color: var(--pizza-red);
   border-radius: 50%;
   height: 1rem;
   width: 1rem;
@@ -27,7 +39,7 @@ input[type="range"].slider::-webkit-slider-thumb {
 }
 
 input[type="range"].slider::-webkit-slider-thumb:hover {
-  background-color: rgb(234, 88, 12);
+  background-color: #d14a4a;
 }
 
 /* Firefox */
@@ -38,7 +50,7 @@ input[type="range"].slider::-moz-range-track {
 }
 
 input[type="range"].slider::-moz-range-thumb {
-  background-color: rgb(249, 115, 22);
+  background-color: var(--pizza-red);
   border: none;
   border-radius: 50%;
   height: 1rem;
@@ -47,7 +59,7 @@ input[type="range"].slider::-moz-range-thumb {
 }
 
 input[type="range"].slider::-moz-range-thumb:hover {
-  background-color: rgb(234, 88, 12);
+  background-color: #d14a4a;
 }
 
 /* Smooth scrolling */

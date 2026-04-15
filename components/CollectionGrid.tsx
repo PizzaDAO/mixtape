@@ -65,7 +65,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pizza-yellow mx-auto"></div>
         <p className="text-gray-400 mt-4">Loading collection...</p>
       </div>
     );
@@ -102,7 +102,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
             <div className="flex gap-2">
               <a
                 href="/player"
-                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-center py-2 px-4 rounded transition text-sm font-medium"
+                className="flex-1 bg-pizza-red hover:brightness-110 text-white text-center py-2 px-4 rounded transition text-sm font-medium"
               >
                 Play
               </a>
@@ -121,7 +121,7 @@ export function CollectionGrid({ quantity }: CollectionGridProps) {
       {quantity > 10 && (
         <div className="bg-black/50 rounded-lg p-8 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-4xl font-bold text-orange-400 mb-2">+{quantity - 10}</p>
+            <p className="text-4xl font-bold text-pizza-yellow mb-2">+{quantity - 10}</p>
             <p className="text-gray-400">More copies</p>
           </div>
         </div>

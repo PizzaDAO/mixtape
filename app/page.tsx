@@ -92,17 +92,17 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          {/* PizzaDAO Logo centered above title */}
+          {/* PizzaDAO Records Logo centered above title */}
           <img
-            src={getImagePath('/pizzadao-logo-white.png')}
-            alt="PizzaDAO"
+            src={getImagePath('/pizzadao-records.svg')}
+            alt="PizzaDAO Records"
             className="h-12 w-auto mx-auto mb-4"
           />
 
-          <h2 className="text-6xl md:text-7xl font-black mb-4 text-yellow-400 tracking-tight">
+          <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
             RARE PIZZA MIXTAPE
           </h2>
-          <p className="text-2xl mb-8 text-gray-300"> <span className="text-white-400 font-bold">HOT & FRESH</span></p>
+          <p className="text-2xl mb-8 text-gray-300"> <span className="text-white font-bold">HOT & FRESH</span></p>
 
           {/* Volume Selector */}
           <div className="flex gap-4 justify-center mb-8">
@@ -110,8 +110,8 @@ export default function Home() {
               onClick={() => setSelectedVolume(1)}
               className={`px-6 py-3 font-bold text-lg border-2 transition ${
                 selectedVolume === 1
-                  ? 'bg-yellow-400 text-black border-yellow-400'
-                  : 'bg-transparent text-gray-400 border-gray-600 hover:border-yellow-400 hover:text-yellow-400'
+                  ? 'bg-pizza-yellow text-black border-pizza-yellow'
+                  : 'bg-transparent text-gray-400 border-gray-600 hover:border-pizza-yellow hover:text-pizza-yellow'
               }`}
             >
               Volume 1
@@ -120,8 +120,8 @@ export default function Home() {
               onClick={() => setSelectedVolume(2)}
               className={`px-6 py-3 font-bold text-lg border-2 transition ${
                 selectedVolume === 2
-                  ? 'bg-yellow-400 text-black border-yellow-400'
-                  : 'bg-transparent text-gray-400 border-gray-600 hover:border-yellow-400 hover:text-yellow-400'
+                  ? 'bg-pizza-yellow text-black border-pizza-yellow'
+                  : 'bg-transparent text-gray-400 border-gray-600 hover:border-pizza-yellow hover:text-pizza-yellow'
               }`}
             >
               Volume 2
@@ -132,8 +132,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto mb-12">
           <div className="grid md:grid-cols-2 gap-8 items-start">
             {/* Album Cover */}
-            <div className="bg-gray-900 rounded-lg p-6 border-2 border-yellow-500">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-yellow-400">
+            <div className="bg-gray-900 rounded-lg p-6 border-2 border-pizza-yellow">
+              <div className="aspect-square rounded-lg overflow-hidden border-2 border-pizza-yellow">
                 <img
                   src={currentVolume.image}
                   alt={`The Rare Pizzas Mixtape ${currentVolume.title}`}
@@ -143,14 +143,14 @@ export default function Home() {
             </div>
 
             {/* Tracklist and Collect Button */}
-            <div className="bg-gray-900 rounded-lg p-6 border-2 border-yellow-500">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-6">Tracklist</h3>
+            <div className="bg-gray-900 rounded-lg p-6 border-2 border-pizza-yellow">
+              <h3 className="text-2xl font-bold text-pizza-yellow mb-6">Tracklist</h3>
 
               {/* Two-column tracklist for larger screens */}
               <ol className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-gray-300">
                 {currentVolume.tracks.map((track, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <span className="text-yellow-400 font-mono text-sm mt-0.5 flex-shrink-0">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="text-pizza-yellow font-mono text-sm mt-0.5 flex-shrink-0">{String(index + 1).padStart(2, '0')}</span>
                     <span className="text-sm">{track}</span>
                   </li>
                 ))}
@@ -163,13 +163,13 @@ export default function Home() {
                     <div className="flex gap-4">
                       <button
                         onClick={() => setIsPurchaseOpen(true)}
-                        className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-yellow-400"
+                        className="flex-1 bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow"
                       >
                         Collected — Buy Another
                       </button>
                       <a
                         href="/player"
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-6 text-xl text-center transition transform hover:scale-105 border-2 border-purple-400"
+                        className="flex-1 bg-pizza-red hover:brightness-110 text-white font-black py-4 px-6 text-xl text-center transition transform hover:scale-105 border-2 border-pizza-red"
                       >
                         Play Now
                       </a>
@@ -177,7 +177,7 @@ export default function Home() {
                   ) : (
                     <button
                       onClick={() => setIsPurchaseOpen(true)}
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-yellow-400"
+                      className="w-full bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow"
                     >
                       Collect — $4.20 USDC
                     </button>
@@ -185,7 +185,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={openConnectModal}
-                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-yellow-400"
+                    className="w-full bg-pizza-yellow hover:brightness-110 text-black font-black py-4 px-6 text-xl transition transform hover:scale-105 border-2 border-pizza-yellow"
                   >
                     Buy
                   </button>
@@ -196,15 +196,15 @@ export default function Home() {
         </div>
 
         <div className="text-center">
-          <h3 className="text-3xl font-bold mb-8 text-yellow-400">Explore</h3>
+          <h3 className="text-3xl font-bold mb-8 text-pizza-yellow">Explore</h3>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="/collection" className="bg-yellow-400 hover:bg-yellow-500 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-black border-2 border-yellow-400">
+            <a href="/collection" className="bg-pizza-yellow hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-black border-2 border-pizza-yellow">
               View Collection
             </a>
-            <a href="/leaderboard" className="bg-purple-600 hover:bg-purple-700 px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2 border-purple-400">
+            <a href="/leaderboard" className="bg-pizza-red hover:brightness-110 px-8 py-4 transition transform hover:scale-105 font-bold text-xl text-white border-2 border-pizza-red">
               Leaderboard
             </a>
-            <a href="/player" className="bg-gray-900 hover:bg-gray-800 px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2 border-yellow-400">
+            <a href="/player" className="bg-gray-900 hover:bg-gray-800 px-8 py-4 transition transform hover:scale-105 font-bold text-xl border-2 border-pizza-yellow">
               Player
             </a>
           </div>

@@ -40,7 +40,7 @@ export function useAudioPlayer(audioUrl: string | null) {
     };
   }, [audioUrl]);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -48,11 +48,15 @@ export function useAudioPlayer(audioUrl: string | null) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().catch((err) => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
         console.error('Failed to play:', err);
-        setError('Failed to play audio');
-      });
-      setIsPlaying(true);
+        setError(
+          'Playback was blocked by the browser. Click play again or interact with the page first.'
+        );
+      }
     }
   };
 
