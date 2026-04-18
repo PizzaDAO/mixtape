@@ -54,7 +54,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           {/* PizzaDAO Records Logo centered above title */}
-          <div className="flex items-center justify-center gap-4 mb-4">
+          <div className="flex items-center justify-center gap-4 mb-2">
             <img
               src={getImagePath('/pizzadao-records.png')}
               alt="PizzaDAO Records"
@@ -64,9 +64,10 @@ export default function Home() {
               PizzaDAO Records
             </span>
           </div>
+          <p className="text-xl mb-6 text-gray-300 tracking-widest uppercase">Presents</p>
 
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
-            RARE PIZZA MIXTAPE
+            RARE PIZZAS MIXTAPE
           </h2>
           <p className="text-2xl mb-8 text-gray-300"> <span className="text-white font-bold">HOT & FRESH</span></p>
 
