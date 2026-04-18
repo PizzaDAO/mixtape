@@ -57,7 +57,7 @@ export default function Home() {
           <img
             src={getImagePath('/pizzadao-records.png')}
             alt="PizzaDAO Records"
-            className="h-12 w-auto mx-auto mb-4"
+            className="h-12 w-auto mx-auto mb-4 invert"
           />
 
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
