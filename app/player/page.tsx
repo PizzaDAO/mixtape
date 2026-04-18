@@ -121,8 +121,8 @@ export default function PlayerPage() {
       <div className="min-h-screen bg-pizza-red text-white">
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <img src={getImagePath('/pizzadao-records.png')} alt="PizzaDAO Records" className="h-12 w-auto invert" />
-            <a href="/" className="text-2xl font-bold">Mixtape</a>
+            <img src={getImagePath('/pizzadao-records.png')} alt="PizzaDAO Records" className="h-16 w-auto invert" />
+            <span className="text-2xl italic text-white font-[family-name:var(--font-naiche)]">PizzaDAO Records</span>
           </div>
           <ConnectButton />
         </nav>
