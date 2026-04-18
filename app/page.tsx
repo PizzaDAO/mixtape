@@ -64,7 +64,7 @@ export default function Home() {
               PizzaDAO Records
             </span>
           </div>
-          <p className="text-xl mb-6 text-gray-300 tracking-widest uppercase">Presents</p>
+          <p className="text-xl mb-6 text-gray-300 font-[family-name:var(--font-naiche)]">presents</p>
 
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
             RARE PIZZAS MIXTAPE
