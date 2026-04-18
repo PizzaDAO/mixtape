@@ -60,7 +60,7 @@ export default function Home() {
               alt="PizzaDAO Records"
               className="h-24 w-auto invert"
             />
-            <span className="text-4xl md:text-5xl italic text-white font-[family-name:var(--font-naiche)]">
+            <span className="text-4xl md:text-5xl text-white font-[family-name:var(--font-naiche)]">
               PizzaDAO Records
             </span>
           </div>

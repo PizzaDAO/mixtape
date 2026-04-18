@@ -122,7 +122,7 @@ export default function PlayerPage() {
         <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <img src={getImagePath('/pizzadao-records.png')} alt="PizzaDAO Records" className="h-16 w-auto invert" />
-            <span className="text-2xl italic text-white font-[family-name:var(--font-naiche)]">PizzaDAO Records</span>
+            <span className="text-2xl text-white font-[family-name:var(--font-naiche)]">PizzaDAO Records</span>
           </div>
           <ConnectButton />
         </nav>
