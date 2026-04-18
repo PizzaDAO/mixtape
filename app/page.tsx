@@ -55,7 +55,7 @@ export default function Home() {
         <div className="text-center mb-12">
           {/* PizzaDAO Records Logo centered above title */}
           <img
-            src={getImagePath('/pizzadao-records.svg')}
+            src={getImagePath('/pizzadao-records.png')}
             alt="PizzaDAO Records"
             className="h-12 w-auto mx-auto mb-4"
           />
