@@ -11,9 +11,10 @@ interface MixtapePlayerProps {
   title: string;
   artist: string;
   coverImageUrl?: string;
+  showDownload?: boolean;
 }
 
-export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: MixtapePlayerProps) {
+export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl, showDownload }: MixtapePlayerProps) {
   const {
     isPlaying,
     currentTime,
@@ -182,6 +183,22 @@ export function MixtapePlayer({ audioUrl, title, artist, coverImageUrl }: Mixtap
         />
         <span className="text-sm text-gray-400 w-12 text-right">{Math.round(volume * 100)}%</span>
       </div>
+
+      {/* Download Button */}
+      {showDownload && (
+        <div className="text-center mb-6">
+          <a
+            href={audioUrl}
+            download
+            className="inline-flex items-center gap-2 bg-pizza-yellow hover:brightness-110 text-black font-bold py-2 px-6 transition transform hover:scale-105"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            Download
+          </a>
+        </div>
+      )}
 
       {/* Session Info */}
       {sessionId && (

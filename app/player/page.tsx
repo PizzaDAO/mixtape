@@ -16,7 +16,7 @@ interface MixtapeMetadata {
 
 export default function PlayerPage() {
   const { address, isConnected } = useAccount();
-  const { ownsNFT, isLoading: isCheckingOwnership, isContractMisconfigured } = useMixtapeOwnership(address);
+  const { ownsNFT } = useMixtapeOwnership(address);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<MixtapeMetadata | null>(null);
@@ -59,10 +59,8 @@ export default function PlayerPage() {
     fetchMetadata();
   }, []);
 
-  // Fetch audio URL when user owns NFT
+  // Fetch audio URL (no wallet required)
   useEffect(() => {
-    if (!address || !ownsNFT) return;
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -86,11 +84,10 @@ export default function PlayerPage() {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${supabaseAnonKey}`,
             },
-            body: JSON.stringify({ userAddress: address }),
+            body: JSON.stringify({ publicAccess: true }),
           }
         );
 
-        // Validate content-type before parsing as JSON
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
           console.error('Unexpected content-type from verify-ownership:', contentType);
@@ -100,8 +97,31 @@ export default function PlayerPage() {
 
         const data = await response.json();
 
-        if (response.ok && data.authorized) {
+        if (response.ok && data.audioUrl) {
           setAudioUrl(data.audioUrl);
+        } else if (response.ok && data.authorized === false) {
+          // Fallback: try with address if public access isn't supported
+          if (address) {
+            const retryResponse = await fetch(
+              `${supabaseUrl}/functions/v1/verify-ownership`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${supabaseAnonKey}`,
+                },
+                body: JSON.stringify({ userAddress: address }),
+              }
+            );
+            const retryData = await retryResponse.json();
+            if (retryResponse.ok && retryData.audioUrl) {
+              setAudioUrl(retryData.audioUrl);
+            } else {
+              setError(retryData.message || retryData.error || 'Failed to load audio');
+            }
+          } else {
+            setError(data.message || 'Failed to load audio');
+          }
         } else {
           setError(data.message || data.error || 'Failed to load audio');
         }
@@ -114,90 +134,7 @@ export default function PlayerPage() {
     };
 
     fetchAudioUrl();
-  }, [address, ownsNFT]);
-
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-pizza-red text-white">
-        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <img src={getImagePath('/pizzadao-records.png')} alt="PizzaDAO Records" className="h-16 w-auto invert" />
-            <span className="text-2xl text-white font-[family-name:var(--font-naiche)]">PizzaDAO Records</span>
-          </div>
-          <ConnectButton />
-        </nav>
-
-        <main className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-5xl font-bold mb-6">Connect Wallet</h1>
-          <p className="text-2xl mb-8">
-            Connect your wallet to listen to the mixtape
-          </p>
-          <ConnectButton />
-        </main>
-      </div>
-    );
-  }
-
-  if (isContractMisconfigured) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
-        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold">PizzaDAO Mixtape</a>
-          <ConnectButton />
-        </nav>
-
-        <main className="container mx-auto px-4 py-16 text-center">
-          <div className="bg-yellow-900/30 border border-yellow-500 rounded-lg p-8 max-w-2xl mx-auto">
-            <p className="text-yellow-400 text-xl mb-4">Configuration Error</p>
-            <p className="text-gray-300">
-              The NFT contract is not configured correctly. Please contact the site administrator.
-            </p>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (isCheckingOwnership) {
-    return (
-      <div className="min-h-screen bg-black text-white">
-        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
-          <ConnectButton />
-        </nav>
-
-        <main className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
-          <p className="text-xl text-gray-400">Checking ownership...</p>
-        </main>
-      </div>
-    );
-  }
-
-  if (!ownsNFT) {
-    return (
-      <div className="min-h-screen bg-black text-white">
-        <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
-          <ConnectButton />
-        </nav>
-
-        <main className="container mx-auto px-4 py-16 text-center">
-          <div className="text-6xl mb-6">🔒</div>
-          <h1 className="text-4xl font-bold mb-6">Access Denied</h1>
-          <p className="text-xl text-gray-400 mb-8">
-            You need to own the PizzaDAO Mixtape NFT to listen
-          </p>
-          <a
-            href="/"
-            className="inline-block bg-pizza-red hover:brightness-110 text-white font-bold py-3 px-8 rounded-lg transition"
-          >
-            Purchase Mixtape
-          </a>
-        </main>
-      </div>
-    );
-  }
+  }, [address]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -241,6 +178,7 @@ export default function PlayerPage() {
             title={metadata.title}
             artist={metadata.artist}
             coverImageUrl={metadata.cover_image_url}
+            showDownload={isConnected}
           />
         ) : (
           <div className="text-center text-gray-400">
