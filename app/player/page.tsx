@@ -1,190 +1,216 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { MixtapePlayer } from '@/components/MixtapePlayer';
-import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { getImagePath } from '@/lib/utils';
-
-interface MixtapeMetadata {
-  title: string;
-  artist: string;
-  cover_image_url?: string;
-}
+import { VOLUMES, type Track } from '@/lib/tracks';
 
 export default function PlayerPage() {
-  const { address, isConnected } = useAccount();
-  const { ownsNFT } = useMixtapeOwnership(address);
+  const { isConnected } = useAccount();
+  const tracks = VOLUMES[1].tracks.filter((t) => t.audioUrl);
+  const coverImage = VOLUMES[1].image;
 
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [metadata, setMetadata] = useState<MixtapeMetadata | null>(null);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  // Fetch metadata
+  const currentTrack = tracks[currentTrackIndex];
+
   useEffect(() => {
-    const fetchMetadata = async () => {
-      if (!isSupabaseConfigured) {
-        // Use fallback metadata when Supabase isn't configured
-        setMetadata({
-          title: 'The Rare Pizzas Mixtape',
-          artist: 'PizzaDAO',
-          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
-        });
-        return;
-      }
+    const audio = audioRef.current;
+    if (!audio) return;
 
-      try {
-        const { data, error } = await supabase
-          .from('mixtape_metadata')
-          .select('title, artist, cover_image_url')
-          .eq('token_id', 1)
-          .single();
-
-        if (error) throw error;
-        setMetadata(data);
-      } catch (err) {
-        console.error('Failed to fetch metadata:', err);
-        // Use fallback metadata on error
-        setMetadata({
-          title: 'The Rare Pizzas Mixtape',
-          artist: 'PizzaDAO',
-          cover_image_url: getImagePath('/mixtape-vol-1.jpg'),
-        });
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onDurationChange = () => setDuration(audio.duration || 0);
+    const onEnded = () => {
+      if (currentTrackIndex < tracks.length - 1) {
+        setCurrentTrackIndex((i) => i + 1);
+      } else {
+        setIsPlaying(false);
       }
     };
 
-    fetchMetadata();
-  }, []);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('durationchange', onDurationChange);
+    audio.addEventListener('ended', onEnded);
 
-  // Fetch audio URL (no wallet required)
+    return () => {
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      audio.removeEventListener('durationchange', onDurationChange);
+      audio.removeEventListener('ended', onEnded);
+    };
+  }, [currentTrackIndex, tracks.length]);
+
+  // Auto-play when track changes
   useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      setError(
-        'Audio service is not configured. Please contact the site administrator.'
-      );
-      return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.load();
+    if (isPlaying) {
+      audio.play().catch(() => {});
     }
+  }, [currentTrackIndex]);
 
-    const fetchAudioUrl = async () => {
-      setIsLoadingAudio(true);
-      setError(null);
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => {});
+    }
+    setIsPlaying(!isPlaying);
+  };
 
-      try {
-        const response = await fetch(
-          `${supabaseUrl}/functions/v1/verify-ownership`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify({ publicAccess: true }),
-          }
-        );
+  const playTrack = (index: number) => {
+    setCurrentTrackIndex(index);
+    setIsPlaying(true);
+  };
 
-        const contentType = response.headers.get('content-type') || '';
-        if (!contentType.includes('application/json')) {
-          console.error('Unexpected content-type from verify-ownership:', contentType);
-          setError('Audio service returned an unexpected response. Please try again later.');
-          return;
-        }
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const t = parseFloat(e.target.value);
+    audio.currentTime = t;
+    setCurrentTime(t);
+  };
 
-        const data = await response.json();
-
-        if (response.ok && data.audioUrl) {
-          setAudioUrl(data.audioUrl);
-        } else if (response.ok && data.authorized === false) {
-          // Fallback: try with address if public access isn't supported
-          if (address) {
-            const retryResponse = await fetch(
-              `${supabaseUrl}/functions/v1/verify-ownership`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${supabaseAnonKey}`,
-                },
-                body: JSON.stringify({ userAddress: address }),
-              }
-            );
-            const retryData = await retryResponse.json();
-            if (retryResponse.ok && retryData.audioUrl) {
-              setAudioUrl(retryData.audioUrl);
-            } else {
-              setError(retryData.message || retryData.error || 'Failed to load audio');
-            }
-          } else {
-            setError(data.message || 'Failed to load audio');
-          }
-        } else {
-          setError(data.message || data.error || 'Failed to load audio');
-        }
-      } catch (err) {
-        console.error('Failed to fetch audio URL:', err);
-        setError('Could not connect to the audio service. Please check your connection and try again.');
-      } finally {
-        setIsLoadingAudio(false);
-      }
-    };
-
-    fetchAudioUrl();
-  }, [address]);
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <audio ref={audioRef} src={currentTrack?.audioUrl ? getImagePath(currentTrack.audioUrl) : undefined} preload="metadata" />
+
       <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold text-pizza-yellow">PizzaDAO Mixtape</a>
+        <div className="flex items-center gap-4">
+          <img src={getImagePath('/pizzadao-records.png')} alt="PizzaDAO Records" className="h-12 w-auto invert" />
+          <a href="/" className="text-2xl font-bold text-pizza-yellow font-[family-name:var(--font-naiche)]">PizzaDAO Records</a>
+        </div>
         <div className="flex gap-4 items-center">
-          <a href="/collection" className="text-gray-300 hover:text-pizza-yellow transition">
-            Collection
-          </a>
-          <a href="/leaderboard" className="text-gray-300 hover:text-pizza-yellow transition">
-            Leaderboard
-          </a>
-          <a href="/artists" className="text-gray-300 hover:text-white transition">
-            Artists
-          </a>
+          <a href="/artists" className="text-gray-300 hover:text-white transition">Artists</a>
           <ConnectButton />
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-8 text-center text-pizza-yellow">Now Playing</h1>
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Cover + Now Playing */}
+            <div>
+              <div className="aspect-square rounded-lg overflow-hidden border-2 border-pizza-yellow mb-4">
+                <img src={coverImage} alt="Rare Pizzas Mixtape Vol. 1" className="w-full h-full object-cover" />
+              </div>
 
-        {isLoadingAudio ? (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pizza-yellow mx-auto mb-4"></div>
-            <p className="text-xl text-gray-400">Loading audio...</p>
+              {/* Now Playing Info */}
+              <div className="text-center mb-4">
+                <p className="text-sm text-gray-400 uppercase tracking-widest">Now Playing</p>
+                <h2 className="text-2xl font-bold text-pizza-yellow">{currentTrack?.title}</h2>
+                <p className="text-gray-400">Track {currentTrack?.trackNumber} of {tracks.length}</p>
+              </div>
+
+              {/* Progress */}
+              <div className="mb-4">
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || 0}
+                  value={currentTime}
+                  onChange={handleSeek}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-sm text-gray-400 mt-1">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center justify-center gap-6">
+                <button
+                  onClick={() => currentTrackIndex > 0 && playTrack(currentTrackIndex - 1)}
+                  className="text-gray-400 hover:text-white transition disabled:opacity-30"
+                  disabled={currentTrackIndex === 0}
+                >
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                  </svg>
+                </button>
+
+                <button
+                  onClick={togglePlay}
+                  className="bg-pizza-red hover:brightness-110 rounded-full p-4 transition"
+                >
+                  {isPlaying ? (
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => currentTrackIndex < tracks.length - 1 && playTrack(currentTrackIndex + 1)}
+                  className="text-gray-400 hover:text-white transition disabled:opacity-30"
+                  disabled={currentTrackIndex === tracks.length - 1}
+                >
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Tracklist */}
+            <div className="bg-gray-900 rounded-lg p-6 border-2 border-pizza-yellow">
+              <h3 className="text-xl font-bold text-pizza-yellow mb-4">Tracklist — Volume 1</h3>
+              <ol className="space-y-1">
+                {tracks.map((track, index) => (
+                  <li key={index}>
+                    <button
+                      onClick={() => playTrack(index)}
+                      className={`w-full text-left px-3 py-2 rounded transition flex items-center gap-3 ${
+                        index === currentTrackIndex
+                          ? 'bg-pizza-yellow/20 text-pizza-yellow'
+                          : 'hover:bg-gray-800 text-gray-300'
+                      }`}
+                    >
+                      <span className="font-mono text-sm w-6 flex-shrink-0">
+                        {index === currentTrackIndex && isPlaying ? '▶' : String(track.trackNumber).padStart(2, '0')}
+                      </span>
+                      <span className="text-sm">{track.title}</span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+
+              {/* Download button for connected users */}
+              {isConnected && currentTrack?.audioUrl && (
+                <div className="mt-6 pt-4 border-t border-gray-700">
+                  <a
+                    href={getImagePath(currentTrack.audioUrl)}
+                    download
+                    className="inline-flex items-center gap-2 bg-pizza-yellow hover:brightness-110 text-black font-bold py-2 px-6 transition transform hover:scale-105 w-full justify-center"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Download "{currentTrack.title}"
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
-        ) : error ? (
-          <div className="bg-red-900/30 border border-pizza-red rounded-lg p-8 max-w-2xl mx-auto text-center">
-            <p className="text-pizza-red mb-4">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition"
-            >
-              Retry
-            </button>
-          </div>
-        ) : audioUrl && metadata ? (
-          <MixtapePlayer
-            audioUrl={audioUrl}
-            title={metadata.title}
-            artist={metadata.artist}
-            coverImageUrl={metadata.cover_image_url}
-            showDownload={isConnected}
-          />
-        ) : (
-          <div className="text-center text-gray-400">
-            <p>Failed to load mixtape</p>
-          </div>
-        )}
+        </div>
       </main>
     </div>
   );
