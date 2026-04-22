@@ -21,99 +21,119 @@ export interface Artist {
   tracks: ArtistTrack[];
 }
 
-// TODO: Replace placeholder data with real artist information from the PizzaDAO team
 export const ARTISTS: Artist[] = [
   {
-    slug: 'dj-pepperoni',
-    // TODO: Replace with real artist name
-    name: 'DJ Pepperoni',
-    // TODO: Replace with real bio
-    bio: 'DJ Pepperoni has been spinning records since before blockchain was cool. A founding member of the PizzaDAO music collective, their beats blend lo-fi hip-hop with Web3 culture to create something truly unique. When not in the studio, they can be found minting rare slices and vibing in the metaverse.',
-    // TODO: Replace with real artist photo (place in public/artists/)
+    slug: 'young-scrimmage',
+    name: 'Young Scrimmage',
+    bio: '',
     photoUrl: '/artists/placeholder.svg',
-    socials: {
-      // TODO: Add real social links
-      twitter: 'https://twitter.com/example',
-      spotify: 'https://open.spotify.com/artist/example',
-      website: 'https://example.com',
-    },
+    socials: {},
     tracks: [
       { title: 'Sauce', volume: 1, trackNumber: 1 },
-      { title: 'Pizza Mind', volume: 1, trackNumber: 3 },
-      { title: "Wow! That's Rare Pizzas", volume: 1, trackNumber: 8 },
-      { title: 'Molto Bene', volume: 1, trackNumber: 13 },
-      { title: 'Opening - Back in the Kitchen', volume: 2, trackNumber: 1 },
-      { title: 'California Dreams', volume: 2, trackNumber: 5 },
-      { title: 'Extra Cheese', volume: 2, trackNumber: 9 },
     ],
   },
   {
-    slug: 'slice-master',
-    // TODO: Replace with real artist name
-    name: 'Slice Master',
-    // TODO: Replace with real bio
-    bio: 'Slice Master brings the heat with every track. Known for their signature synth-heavy production style, they have been a key contributor to both volumes of the Rare Pizzas Mixtape. Their sound draws from classic hip-hop, electronic, and the unmistakable energy of pizza culture.',
-    // TODO: Replace with real artist photo (place in public/artists/)
+    slug: 'ife-senoj',
+    name: 'IFE SENOJ',
+    bio: '',
     photoUrl: '/artists/placeholder.svg',
-    socials: {
-      // TODO: Add real social links
-      twitter: 'https://twitter.com/example',
-      instagram: 'https://instagram.com/example',
-      soundcloud: 'https://soundcloud.com/example',
-    },
+    socials: {},
+    tracks: [
+      { title: 'Sauce', volume: 1, trackNumber: 1 },
+    ],
+  },
+  {
+    slug: 'taj',
+    name: 'TAJ.',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
+    tracks: [
+      { title: 'Sauce', volume: 1, trackNumber: 1 },
+    ],
+  },
+  {
+    slug: 'chad-downing',
+    name: 'Chad Downing',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
     tracks: [
       { title: 'Rare Pizzas', volume: 1, trackNumber: 2 },
-      { title: 'I Ate Myself and Want To Pie', volume: 1, trackNumber: 5 },
-      { title: 'PizzaDAO (We in the Metaverse)', volume: 1, trackNumber: 10 },
-      { title: 'Rare Pizzas Mixtape Outro', volume: 1, trackNumber: 14 },
-      { title: 'New York Style', volume: 2, trackNumber: 2 },
-      { title: 'Neapolitan Nights', volume: 2, trackNumber: 6 },
-      { title: 'Hot Out The Oven', volume: 2, trackNumber: 10 },
     ],
   },
   {
-    slug: 'crust-collective',
-    // TODO: Replace with real artist name
-    name: 'Crust Collective',
-    // TODO: Replace with real bio
-    bio: 'Crust Collective is a group of producers who came together through PizzaDAO. Their collaborative approach to music-making means every track has a different flavor, but always keeps that signature crispy edge. They believe music, like pizza, is best when shared with the community.',
-    // TODO: Replace with real artist photo (place in public/artists/)
+    slug: 'heartistry',
+    name: 'Heartistry',
+    bio: '',
     photoUrl: '/artists/placeholder.svg',
-    socials: {
-      // TODO: Add real social links
-      twitter: 'https://twitter.com/example',
-      instagram: 'https://instagram.com/example',
-      website: 'https://example.com',
-    },
+    socials: {},
+    tracks: [
+      { title: 'Pizza Mind', volume: 1, trackNumber: 3 },
+    ],
+  },
+  {
+    slug: 'zenfinite369',
+    name: 'Zenfinite369',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
     tracks: [
       { title: 'DAO It', volume: 1, trackNumber: 4 },
-      { title: 'Pizza Tron', volume: 1, trackNumber: 9 },
-      { title: "Ain't No Za (if The Homies Can't Have a Slice)", volume: 1, trackNumber: 11 },
-      { title: 'Chicago Deep', volume: 2, trackNumber: 3 },
-      { title: 'Sicilian Soul', volume: 2, trackNumber: 7 },
-      { title: 'The Crust', volume: 2, trackNumber: 11 },
+      { title: 'Slice of Heaven', volume: 1, trackNumber: 12 },
     ],
   },
   {
-    slug: 'margherita-beats',
-    // TODO: Replace with real artist name
-    name: 'Margherita Beats',
-    // TODO: Replace with real bio
-    bio: 'Margherita Beats keeps it simple and classic, just like their namesake. With a focus on melody and groove, their productions bring a soulful warmth to the mixtape. A true believer in the intersection of music and decentralized culture, they have been part of PizzaDAO since day one.',
-    // TODO: Replace with real artist photo (place in public/artists/)
+    slug: 'nicholas-kosearas',
+    name: 'Nicholas Kosearas',
+    bio: '',
     photoUrl: '/artists/placeholder.svg',
-    socials: {
-      // TODO: Add real social links
-      spotify: 'https://open.spotify.com/artist/example',
-      soundcloud: 'https://soundcloud.com/example',
-    },
+    socials: {},
+    tracks: [
+      { title: 'I Ate Myself and Want To Pie', volume: 1, trackNumber: 5 },
+    ],
+  },
+  {
+    slug: 'prtty-plz',
+    name: 'Prtty Plz',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
     tracks: [
       { title: 'Pizza Shortie', volume: 1, trackNumber: 6 },
+      { title: "Wow! That's Rare Pizzas", volume: 1, trackNumber: 8 },
+    ],
+  },
+  {
+    slug: 'lobo-301',
+    name: 'LoBo_301',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
+    tracks: [
       { title: 'Pizza Pop', volume: 1, trackNumber: 7 },
-      { title: 'Slice of Heaven', volume: 1, trackNumber: 12 },
-      { title: 'Detroit Square', volume: 2, trackNumber: 4 },
-      { title: 'White Pizza (Interlude)', volume: 2, trackNumber: 8 },
-      { title: 'Closing - Until Next Time', volume: 2, trackNumber: 12 },
+      { title: 'PizzaDAO (We in the Metaverse)', volume: 1, trackNumber: 10 },
+      { title: 'Molto Bene', volume: 1, trackNumber: 13 },
+    ],
+  },
+  {
+    slug: 'brauxelion',
+    name: 'Brauxelion',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
+    tracks: [
+      { title: 'Pizza Tron', volume: 1, trackNumber: 9 },
+    ],
+  },
+  {
+    slug: 'dream-panther',
+    name: 'Dream Panther',
+    bio: '',
+    photoUrl: '/artists/placeholder.svg',
+    socials: {},
+    tracks: [
+      { title: "Ain't No Za (if The Homies Can't Have a Slice)", volume: 1, trackNumber: 11 },
     ],
   },
 ];
