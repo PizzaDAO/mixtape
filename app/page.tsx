@@ -69,7 +69,8 @@ export default function Home() {
           <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
             RARE PIZZAS MIXTAPE
           </h2>
-          <span className="inline-block bg-pizza-red text-white font-black text-sm tracking-widest uppercase px-4 py-1 rounded-full mb-8">HOT & FRESH</span>
+          <span className="inline-block bg-pizza-red text-white font-black text-sm tracking-widest uppercase px-4 py-1 rounded-full mb-4">HOT & FRESH</span>
+          <p className="text-lg text-gray-400 mb-8">Executive Produced by <a href="https://linktr.ee/lobo_301" target="_blank" rel="noopener noreferrer" className="text-pizza-yellow hover:underline">LoBo_301</a></p>
 
           {/* Volume Selector */}
           <div className="flex gap-4 justify-center mb-8">
