@@ -66,10 +66,12 @@ export default function Home() {
           </div>
           <p className="text-xl mb-6 text-gray-300 font-[family-name:var(--font-naiche)]">presents</p>
 
-          <h2 className="text-6xl md:text-7xl font-black mb-4 text-pizza-yellow tracking-tight">
-            RARE PIZZAS MIXTAPE
-          </h2>
-          <span className="inline-block bg-pizza-red text-white font-black text-sm tracking-widest uppercase px-4 py-1 rounded-full mb-4">HOT & FRESH</span>
+          <div className="relative inline-block mb-4">
+            <h2 className="text-6xl md:text-7xl font-black text-pizza-yellow tracking-tight">
+              RARE PIZZAS MIXTAPE
+            </h2>
+            <span className="absolute -top-3 -right-4 bg-pizza-red text-white font-black text-xs tracking-widest uppercase px-3 py-1 rounded-full rotate-12">HOT & FRESH</span>
+          </div>
           <p className="text-lg text-gray-400 mb-8">Executive Produced by <a href="https://linktr.ee/lobo_301" target="_blank" rel="noopener noreferrer" className="text-pizza-yellow hover:underline">LoBo_301</a></p>
 
           {/* Volume Selector */}
