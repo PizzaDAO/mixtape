@@ -2,6 +2,7 @@
 
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { OpenInWallet } from '@/components/OpenInWallet';
 import { CollectionGrid } from '@/components/CollectionGrid';
 import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
 
@@ -23,6 +24,7 @@ export default function CollectionPage() {
             Connect your wallet to view your mixtape collection
           </p>
           <ConnectButton />
+          <OpenInWallet className="mt-8 mx-auto max-w-md text-left" />
         </main>
       </div>
     );

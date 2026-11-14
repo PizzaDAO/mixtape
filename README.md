@@ -109,7 +109,6 @@ Required variables:
 - `NEXT_PUBLIC_USDC_ADDRESS` - USDC contract on Base (already set)
 - `NEXT_PUBLIC_NFT_CONTRACT_ADDRESS` - Your deployed NFT contract
 - `NEXT_PUBLIC_TREASURY_ADDRESS` - Wallet to receive payments
-- `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` - From [WalletConnect Cloud](https://cloud.walletconnect.com/)
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
 
