@@ -12,7 +12,7 @@ export const config = createConfig({
   }),
   transports: {
     [base.id]: http(),
-    [mainnet.id]: http(),
+    [mainnet.id]: http('https://ethereum-rpc.publicnode.com', { batch: false }),
   },
   ssr: true,
 });
