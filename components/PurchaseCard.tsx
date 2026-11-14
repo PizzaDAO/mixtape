@@ -2,6 +2,7 @@
 
 import { useAccount, useSwitchChain } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { OpenInWallet } from './OpenInWallet';
 import { useMixtapePurchase } from '@/hooks/useMixtapePurchase';
 import { useMixtapeOwnership } from '@/hooks/useMixtapeOwnership';
 import { useUsdcBalance } from '@/hooks/useUsdcBalance';
@@ -40,6 +41,7 @@ export function PurchaseCard({ onSuccess }: PurchaseCardProps) {
           Connect your wallet to buy The Rare Pizzas Mixtape NFT
         </p>
         <ConnectButton />
+        <OpenInWallet className="mt-6" />
       </div>
     );
   }
